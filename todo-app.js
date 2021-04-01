@@ -52,9 +52,10 @@
             deleteButton
         }
     }
-    document.addEventListener('DOMContentLoaded', function () {
-        let container = document.getElementById('todo-app');
-        let todoAppTitle = createAppTitle('Список дел');
+    
+    function createTodoApp(container,title = 'Список дел') {
+        // let container = document.getElementById('todo-app');
+        let todoAppTitle = createAppTitle(title);
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList();
         // let todoItems = [createTodoItem('сходить за хлебом'), createTodoItem('купить молока')]
@@ -70,8 +71,26 @@
             if (!todoItemForm.input.value) {
                 return
             }
-            todoList.append(createTodoItem(todoItemForm.input.value).item)
-            todoItemForm.input.value = ''
+            // todoList.append(createTodoItem(todoItemForm.input.value).item)
+            let todoItem = createTodoItem(todoItemForm.input.value)
+            todoItem.doneButton.addEventListener('click', function () {
+                todoItem.item.classList.toggle('list-group-item-success');
+            })
+            todoItem.deleteButton.addEventListener('click', function () {
+                if (confirm('Вы уверены')) {
+                    todoItem.item.remove();
+                }
+            })
+            todoList.append(todoItem.item);
+            todoItemForm.input.value = '';
         })
-    })
+    }
+
+   window.createTodoApp = createTodoApp;
 })();
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     createTodoApp(document.getElementById('my-todos'),'Мои дела')
+//     createTodoApp(document.getElementById('mom-todos'),'Дела для мамы')
+//     createTodoApp(document.getElementById('dad-todos'),'Дела для папы')
+// })
