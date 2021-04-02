@@ -1,6 +1,4 @@
 (function () {
-    let todoLocalStorageList = [];
-
     function createAppTitle(title) {
         let appTitle = document.createElement('h2');
         appTitle.innerHTML = title;
@@ -55,49 +53,40 @@
             deleteButton
         }
     }
-
-    function createTodoApp(container, title = 'Список дел', todoListObject = []) {
+    
+    function createTodoApp(container,title = 'Список дел', todoListObject = undefined) {
         // let container = document.getElementById('todo-app');
         let todoAppTitle = createAppTitle(title);
         let todoItemForm = createTodoItemForm();
         let todoList = createTodoList();
         let todoItems = [];
+        for(let i = 0; i < ) {
+             
+        }
+
+        // let todoItems = [createTodoItem('сходить за хлебом'), createTodoItem('купить молока')]
+
         container.append(todoAppTitle);
         container.append(todoItemForm.form);
         container.append(todoList);
-        dataFromLocalStorage = localStorage.getItem('my');
-        console.log('dataFromLocalStorage',dataFromLocalStorage)
 
-        for (let i = 0; i < todoListObject.length; i++) {
-            todoItems[i] = createTodoItem(todoListObject[i].name)
-
-            let todoLocalStorageItem = {}
-            todoLocalStorageItem.name = todoListObject[i].name;
-            todoLocalStorageItem.done = todoListObject[i].done;
-            todoLocalStorageList.push(todoLocalStorageItem);
-
-            if (todoListObject[i].done) {
-                todoItems[i].item.classList.add('list-group-item-success')
-            }
-            console.log(todoItems[i])
-            todoList.append(todoItems[i].item)
-        }
-        // let todoItems = [createTodoItem('сходить за хлебом'), createTodoItem('купить молока')]
+        // todoList.append(todoItems[0].item)
         // todoList.append(todoItems[1].item)
-
-        todoItemForm.input.addEventListener('input', function () {
-            if (!todoItemForm.input.value) {
-                todoItemForm.button.disabled = true;
+        todoItemForm.input.addEventListener('input',function(){
+            if(!todoItemForm.input.value) {
+               todoItemForm.button.disabled = true; 
             }
             else {
-                todoItemForm.button.disabled = false;
+               todoItemForm.button.disabled = false;
             }
         })
         todoItemForm.form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (!todoItemForm.input.value) {
+                // todoItemForm.button.disabled = true;
                 return
             }
+            // todoList.append(createTodoItem(todoItemForm.input.value).item)
             let todoItem = createTodoItem(todoItemForm.input.value)
             todoItem.doneButton.addEventListener('click', function () {
                 todoItem.item.classList.toggle('list-group-item-success');
@@ -110,15 +99,8 @@
             todoList.append(todoItem.item);
             todoItemForm.input.value = '';
             todoItemForm.button.disabled = true;
-           
-            let todoLocalStorageItem = {}
-            todoLocalStorageItem.name = todoItem.item;
-            
-            todoLocalStorageItem.done = true;
-            todoLocalStorageList.push(todoLocalStorageItem);
-            localStorage.setItem('my', JSON.stringify(todoLocalStorageList));
         })
     }
 
-    window.createTodoApp = createTodoApp;
+   window.createTodoApp = createTodoApp;
 })();
