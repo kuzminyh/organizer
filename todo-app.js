@@ -56,7 +56,7 @@
         }
     }
 
-    function createTodoApp(container, title = 'Список дел', todoListObject = []) {
+    function createTodoApp(container, title = 'Список дел', todoListObject = [], whoseTodo) {
         // let container = document.getElementById('todo-app');
         let todoAppTitle = createAppTitle(title);
         let todoItemForm = createTodoItemForm();
@@ -65,26 +65,47 @@
         container.append(todoAppTitle);
         container.append(todoItemForm.form);
         container.append(todoList);
-        dataFromLocalStorage = localStorage.getItem('my');
-        console.log('dataFromLocalStorage',dataFromLocalStorage)
+        let dataFromLocalStorage = JSON.parse(localStorage.getItem(whoseTodo)) === null ? [] : JSON.parse(localStorage.getItem(whoseTodo));
+
+        console.log('dataFromLocalStorage', dataFromLocalStorage)
+        for (let i = 0; i < dataFromLocalStorage.length; i++) {
+            todoItems[i] = createTodoItem(dataFromLocalStorage[i].name)
+            if (dataFromLocalStorage[i].done) {
+                todoItems[i].item.classList.add('list-group-item-success')
+            }   
+                todoItems[i].deleteButton.addEventListener('click', function () {
+                    if (confirm('Вы уверены')) {
+                        todoItems[i].item.remove();
+                    }
+                })
+            
+             todoItems[i].doneButton.addEventListener('click', function () {
+                    todoItems[i].item.classList.toggle('list-group-item-success');
+                })
+
+            todoList.append(todoItems[i].item)
+        }
+        console.log('todoListObject', todoListObject.length)
 
         for (let i = 0; i < todoListObject.length; i++) {
             todoItems[i] = createTodoItem(todoListObject[i].name)
-
-            let todoLocalStorageItem = {}
-            todoLocalStorageItem.name = todoListObject[i].name;
-            todoLocalStorageItem.done = todoListObject[i].done;
-            todoLocalStorageList.push(todoLocalStorageItem);
-
             if (todoListObject[i].done) {
                 todoItems[i].item.classList.add('list-group-item-success')
+                todoItems[i].doneButton.addEventListener('click', function () {
+                todoItems[i].item.classList.toggle('list-group-item-success');
+                })
             }
-            console.log(todoItems[i])
+                todoItems[i].doneButton.addEventListener('click', function () {
+                    todoItems[i].item.classList.toggle('list-group-item-success');
+                })
+                todoItems[i].deleteButton.addEventListener('click', function () {
+                    if (confirm('Вы уверены')) {
+                        todoItems[i].item.remove();
+                    }
+                })
+            
             todoList.append(todoItems[i].item)
         }
-        // let todoItems = [createTodoItem('сходить за хлебом'), createTodoItem('купить молока')]
-        // todoList.append(todoItems[1].item)
-
         todoItemForm.input.addEventListener('input', function () {
             if (!todoItemForm.input.value) {
                 todoItemForm.button.disabled = true;
@@ -108,15 +129,22 @@
                 }
             })
             todoList.append(todoItem.item);
-            todoItemForm.input.value = '';
             todoItemForm.button.disabled = true;
-           
+
             let todoLocalStorageItem = {}
-            todoLocalStorageItem.name = todoItem.item;
-            
-            todoLocalStorageItem.done = true;
-            todoLocalStorageList.push(todoLocalStorageItem);
-            localStorage.setItem('my', JSON.stringify(todoLocalStorageList));
+            todoLocalStorageItem.name = todoItemForm.input.value;
+            todoItemForm.input.value = '';
+
+            let a = todoItem.item.classList.contains('list-group-item-success');
+            if (a) {
+                todoLocalStorageItem.done = true;
+            }
+            else {
+                todoLocalStorageItem.done = false;
+            }
+
+            dataFromLocalStorage.push(todoLocalStorageItem);
+            localStorage.setItem(whoseTodo, JSON.stringify(dataFromLocalStorage));
         })
     }
 
